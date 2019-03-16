@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  scm:
+    image: gitlab/gitlab-ce:latest
+    restart: always
+    hostname: localhost
+    ports:
+      - 80:80
+      - 443:443
+      - 1002:22
+    volumes:
+      - /var/local/gitlab/config:/etc/gitlab
+      - /var/local/gitlab/logs:/var/log/gitlab
+      - /var/local/gitlab/data:/var/opt/gitlab
