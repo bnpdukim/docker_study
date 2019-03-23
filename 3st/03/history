@@ -1,0 +1,15 @@
+1398  docker-machine create -d virtualbox node1
+1399  eval $(docker-machine env node1)
+1400  docker swarm init --advertise-addr 192.168.99.100
+
+1401  docker-machine create -d virtualbox node2 
+ 1410  docker $(docker-machine config node2) swarm join --token SWMTKN-1-4kpzv4dmlyg7gwj95l6fx8pkgsksa460j8wtbp1ig3tr9ujgw0-e8c4emtqpg3as3rg7rk6vffym 192.168.99.100:2377
+
+ 1411  docker-machine create -d virtualbox node3
+ 1412  docker $(docker-machine config node3) swarm join --token SWMTKN-1-4kpzv4dmlyg7gwj95l6fx8pkgsksa460j8wtbp1ig3tr9ujgw0-e8c4emtqpg3as3rg7rk6vffym 192.168.99.100:2377
+
+ 1414  docker network create -d overlay frontend
+ 1419  docker service create --name myweb -p 80:80 nginx:1.10
+ 1423  docker $(docker-machine config node1) service scale myweb=5
+ 1428  docker $(docker-machine config node1) service update --image nginx:1.11 myweb
+

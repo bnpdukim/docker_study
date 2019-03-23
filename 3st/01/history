@@ -1,0 +1,12 @@
+docker-machine create -d virtualbox dukim-consul
+docker-machine env dukim-consul
+eval $(docker-machine env dukim-consul)
+docker run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap
+ 
+docker-machine create -d virtualbox --engine-opt="cluster-store=consul://$(docker-machine ip dukim-consul):8500" --engine-opt="cluster-advertise=eth1:0" dukim-demo1
+docker-machine create -d virtualbox --engine-opt="cluster-store=consul://$(docker-machine ip dukim-consul):8500" --engine-opt="cluster-advertise=eth1:0" dukim-demo2
+
+docker $(docker-machine config dukim-demo1) network create -d overlay frontend
+docker $(docker-machine config dukim-demo1) run -itd --name=web --net=frontend nginx
+docker $(docker-machine config dukim-demo2) run -it --rm --net=frontend busybox wget -qO- http://web
+
